@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<title>収支シミュレータ</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=Caveat&display=swap');
+
+		body {
+			font-family: "Meiryo", Hiragino Kaku Gothic Pro, Osaka, sans-serif;
+			margin: 5%;
+		}
+
+		.header {
+			background-image: url('https://cdn.pixabay.com/photo/2017/01/11/08/09/dollar-1971103_1280.jpg');
+			background-size: cover;
+			background-position: center;
+			background-repeat: no-repeat;
+			color: white;
+			padding: 20px 0;
+			text-align: left;
+			/* テキストを中央揃えにする */
+		}
+
+		table {
+			border-collapse: collapse;
+			width: 99%;
+			table-layout: fixed;
+		}
+
+		th,
+		td {
+			border: 1px solid #ccc;
+			padding: 8px;
+			text-align: left;
+			box-sizing: border-box;
+		}
+
+		td:nth-child(3),
+		td:nth-child(4),
+		td:nth-child(5),
+		.aggregationTable td:nth-child(2) {
+			text-align: right;
+		}
+
+		th {
+			background-color: #191970;
+			color: #fff;
+			position: -webkit-sticky;
+			position: sticky;
+		}
+
+		tr {
+			background-color: #ffffff;
+		}
+
+		button {
+			padding: 6px 12px;
+			background-color: #333370;
+			color: #fff;
+			border: none;
+			border-radius: 4px;
+			cursor: pointer;
+			margin: 5%;
+		}
+
+		button:hover {
+			background-color: #4169E1;
+		}
+
+		input,
+		select {
+			flex-grow: 1;
+			align-items: center;
+			width: 90%;
+			background-color: #FFFFFF;
+			box-sizing: border-box;
+			color: #333;
+			border: 1px solid #ccc;
+			padding: 5px 10px;
+		}
+
+		.detailTable thead th {
+			/* 縦スクロール時に固定する */
+			position: -webkit-sticky;
+			position: sticky;
+			font-size: 14px;
+		}
+
+		.detailTable thead tr:nth-child(1) th {
+			top: 0;
+		}
+
+		.detailTable thead tr:nth-child(2) th {
+			top: 3.7rem;
+		}
+
+
+		.aggregationTable {
+			position: -webkit-sticky;
+			position: sticky;
+			top: 0;
+		}
+
+		.error-message {
+			color: orangered;
+			font-size: 14px;
+		}
+
+		.notification-message {
+			color: lightblue;
+			font-size: 14px;
+		}
+
+		h1 {
+			margin-bottom: 0;
+			/* タイトルの下のマージンを削除 */
+		}
+
+		.carousel-inner {
+			text-align: left;
+			padding-top: 0px;
+			padding-bottom: 40px;
+			padding-left: 100px;
+			padding-right: 100px;
+		}
+
+
+		.carousel-control-prev-icon,
+		.carousel-control-next-icon {
+			filter: invert(58%) grayscale(100%);
+			/* Use gray color for arrows */
+			position: absolute;
+			/* Fix position of arrows */
+			z-index: 1;
+			/* Ensure arrows are on top */
+		}
+
+		.carousel-control-prev,
+		.carousel-control-next {
+			background-color: white;
+			width: 1%;
+			z-index: 1;
+			/* Ensure controls are on top */
+		}
+
+		.carousel-indicators {
+			bottom: 0px;
+			list-style-type: none;
+			/* This removes the default numbers */
+		}
+
+		.carousel-indicators li {
+			background-color: gray !important;
+			width: 15px;
+			height: 15px;
+			margin-right: 5px;
+			margin-left: 5px;
+		}
+
+		.carousel-indicators .active {
+			background-color: black !important;
+		}
+	</style>
+
+	</style>
+
+	<script>
+		function saveAccountDetailFormList(button) {
+			const form = button.parentNode;
+			form.action = "/saveAccountDetailFormList";
+			form.method = "post";
+			form.submit();
+		}
+
+		function removeAccountDetailForm(button) {
+			const form = button.parentNode;
+			form.action = "/removeAccountDetailForm";
+			form.method = "post";
+
+			// ダイアログボックスの表示
+			if (confirm("元には戻せません。本当に明細を削除してよいですか？（必要に応じて一覧保存してください）")) {
+				form.submit();
+			}
+		}
+
+		function editAccountDetailForm(button) {
+			const form = button.parentNode;
+			form.action = "/editAccountDetailForm";
+			form.method = "post";
+			form.submit();
+		}
+
+
+		function createAccountDetailForm() {
+			const form = document.getElementById("createAccountDetailForm");
+
+			let unitValueField = form.elements["unitValue"]; // form.elementsを使用して特定のフィールドを取得します
+			unitValueField.value = unitValueField.value.replace(/,/g, ""); // replace()を使用して全てのカンマを取り除きます
+			let unitAmountField = form.elements["unitAmount"]; // form.elementsを使用して特定のフィールドを取得します
+			unitAmountField.value = unitAmountField.value.replace(/,/g, ""); // replace()を使用して全てのカンマを取り除きます
+			form.action = "/createAccountDetailForm";
+			form.method = "post";
+			form.submit();
+		}
+
+		function updateAccountDetailForm(button) {
+			const form = document.getElementById("accountDetailNumber" + button.getAttribute('index'));
+
+			let unitValueField = form.elements["unitValue"]; // form.elementsを使用して特定のフィールドを取得します
+			unitValueField.value = unitValueField.value.replace(/,/g, ""); // replace()を使用して全てのカンマを取り除きます
+			let unitAmountField = form.elements["unitAmount"]; // form.elementsを使用して特定のフィールドを取得します
+			unitAmountField.value = unitAmountField.value.replace(/,/g, ""); // replace()を使用して全てのカンマを取り除きます
+			form.action = "/updateAccountDetailForm";
+			form.method = "post";
+			form.submit();
+		}
+
+		function cancelAccountDetailForm(button) {
+			const form = document.getElementById("accountDetailNumber" + button.getAttribute('index'));
+			form.action = "/showAccountDetailFormList";
+			form.method = "get";
+			form.submit();
+		}
+
+		//カンマ入力値をサニタイズする実装
+		function formatNumber(input) {
+			// 入力値からカンマを削除して数値を取得
+			var value = input.value.replace(/,/g, '');
+
+			// 空文字列の場合は、処理を終了
+			if (value === '') {
+				return;
+			}
+
+			// 文字列を数値に変換
+			var number = Number(value);
+
+			// 数値変換に成功した場合の処理
+			if (!isNaN(number)) {
+				// 数値を3桁区切りのカンマ形式に変換
+				// 前提仕様：　https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Global_Objects/Number/toLocaleString
+				var formattedValue = number.toLocaleString('en-US');
+				// 変換後の値を入力フィールドにセット
+				input.value = formattedValue;
+			} else {
+				// 数値変換に失敗した場合は元の値を保持する
+				input.value = value;
+			}
+		}
+
+		//画面返却時のカンマ区切りを有効にする対応
+		window.addEventListener("DOMContentLoaded", function () {
+			var inputs = document.querySelectorAll('input[type="text"][onblur]');
+			inputs.forEach(function (input) {
+				formatNumber(input);
+			});
+		});
+
+
+		// ここから画面返却時のスクロール固定用
+		// ページがロードされた際に実行する処理
+		window.addEventListener('DOMContentLoaded', function () {
+			// Cookieから保存されたスクロール位置を取得する
+			var scrollPosition = getCookie('scrollPosition');
+			if (scrollPosition) {
+				// スクロール位置を復元する
+				window.scrollTo(0, scrollPosition);
+			}
+		});
+
+		// ページがアンロードされる際に実行する処理
+		window.addEventListener('beforeunload', function () {
+			// 現在のスクロール位置をCookieに保存する
+			setCookie('scrollPosition', window.pageYOffset);
+		});
+
+		// Cookieから値を取得する関数
+		function getCookie(name) {
+			var value = '; ' + document.cookie;
+			var parts = value.split('; ' + name + '=');
+			if (parts.length === 2) {
+				return parts.pop().split(';').shift();
+			}
+		}
+
+		// Cookieに値を設定する関数
+		function setCookie(name, value) {
+			document.cookie = name + '=' + value + '; path=/';
+		}
+        //　ここまでスクロール位置固定実装
+	</script>
+
+</head>
+
+<body>
+	<div class="header">
+		<h2>フリーランス向け税額／収支シミュレータ</h3>
+	</div>
+	<div class="container mt-5">
+		<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+			<div class="carousel-inner">
+				<div class="carousel-item active" data-bs-interval="10000">
+					<h2>概要</h2>
+						<li>本サービスは、年間の売上、必要経費、所得控除、税額控除費目から、凡その税額と手残りとなる金額を計算するサービスです。</li>
+						<li>"価値留保有"フラグは価値が第三者に譲渡されない費目を指し、最終的に手残りに加算されます。iDeco、小規模企業共済等の積立資産は第三者譲渡はありませんが、自由な引き出しが出来ないため、これを手残りとみなすかどうかご自身でご判断ください。
+				</div>
+				<div class="carousel-item" data-bs-interval="20000">
+					<h2>操作方法</h2>
+					<ul>
+						<li>初回アクセス時は初期値が入力されています。自由に明細情報を編集して利用ください。</li>
+						<li>「一覧保存」ボタンをクリックするとレコードIDが付与されたURLが生成されます。このURLを保存することで、後からデータの復元が可能です。</li>
+					</ul>
+				</div>
+				<div class="carousel-item" data-bs-interval="20000">
+					<h2>注意事項</h2>
+					<ul>
+						<li>概算値につき、正確な計算が必要な場合は専門家に助言を求めてください。</li>
+						<li>本サービスは利便性の観点から認証機能を有していません。個人情報や取引先など、秘匿性の高い情報の入力にはご注意ください。</li>
+						<li>各項目／明細の表現は専門家レビューを受けたものではありません。必要に応じて適宜読み替えてください。</li>
+						</li>
+					</ul>
+				</div>
+				<div class="carousel-item" data-bs-interval="20000">
+					<h2>免責事項</h2>
+					<ul>
+
+						<li>サービスの仕様は予告なく変更される可能性があります。また保存データはサービスの改善に活用されることがあります。</li>
+						<li>当サービスは、提供される情報やサービスの内容に関して、その正確性や完全性、適時性、安全性などを保証するものではありません。また、ユーザーが当サービスを使用することで発生する損害について、原因の如何を問わず、当サービスは責任を負いかねます。ご理解の上、ご利用をお願い申し上げます。
+						</li>
+					</ul>
+				</div>
+			</div>
+			<button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls"
+				data-bs-slide="prev">
+				<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+				<span class="visually-hidden"></span>
+			</button>
+			<button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls"
+				data-bs-slide="next">
+				<span class="carousel-control-next-icon" aria-hidden="true"></span>
+				<span class="visually-hidden"></span>
+			</button>
+			<ol class="carousel-indicators">
+				<li data-bs-target="#carouselExampleControls" data-bs-slide-to="0" class="active"></li>
+				<li data-bs-target="#carouselExampleControls" data-bs-slide-to="1"></li>
+				<li data-bs-target="#carouselExampleControls" data-bs-slide-to="2"></li>
+				<li data-bs-target="#carouselExampleControls" data-bs-slide-to="3"></li>
+			</ol>
+		</div>
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+
+
+	<div style="display: flex;">
+		<div style="width: 100%;">
+			<table id="detailTable" class="detailTable">
+				<thead>
+					<tr>
+						<th colspan="1">
+							<form>
+								<button type="button" onclick="saveAccountDetailFormList(this)">一覧保存</button>
+							</form>
+						</th>
+						<th colspan="6">
+							<div th:if="${errorMessages != null or notificationMessages != null}">
+								<ul>
+									<li th:each="errorMessage : ${errorMessages}" th:text="${errorMessage}"
+										class="error-message">
+									</li>
+									<li th:each="notificationMessage : ${notificationMessages}"
+										th:text="${notificationMessage}" class="notification-message"></li>
+								</ul>
+							</div>
+						</th>
+					</tr>
+					<tr>
+						<th>分類</th>
+						<th>摘要</th>
+						<th>単価<font size="1">(月額)</font>
+						</th>
+						<th>数量<font size="1">(月数)</font>
+						</th>
+						<th>年額<font size="1">(消費税抜)</font>
+						</th>
+						<th>価値留保有<font size="1">(第三者への価値譲渡無し)</font>
+						</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody id="detailTableBody" th:each="accountDetail, index : ${accountDetailFormList}">
+
+					<tr>
+						<td th:if="${editIndex != index.index}" th:text="${accountDetail.category.description}"></td>
+						<td th:if="${editIndex == index.index}">
+							<form th:id="'accountDetailNumber' + ${index.index}" th:object="${updateAccountDetailForm}">
+
+								<select required th:field="*{category}">
+									<option value="" disabled selected>分類選択</option>
+									<option
+										th:each="category : ${T(com.lifehackaid.netincomesimulator.constant.AccountCategories).values()}"
+										th:value="${category}" th:text="${category.description}"
+										th:selected="${category.description == updateAccountDetailForm.category.description}">
+									</option>
+								</select>
+
+						</td>
+
+						<td th:if="${editIndex != index.index}" th:text="${accountDetail.summary}"></td>
+						<td th:if="${editIndex == index.index}"><input type="text"
+								th:field="*{updateAccountDetailForm.summary}"></td>
+
+						<td th:if="${editIndex != index.index}"
+							th:text="${#numbers.formatInteger(accountDetail.unitValue, 0, 'COMMA')}"></td>
+						<td th:if="${editIndex == index.index}">
+							<input type="text" th:field="*{updateAccountDetailForm.unitValue}"
+								onblur="formatNumber(this)">
+						</td>
+
+						<td th:if="${editIndex != index.index}"
+							th:text="${#numbers.formatInteger(accountDetail.unitAmount, 0, 'COMMA')}"></td>
+						<td th:if="${editIndex == index.index}">
+							<input type="text" th:field="*{updateAccountDetailForm.unitAmount}"
+								onblur="formatNumber(this)">
+						</td>
+
+						<td th:text="${#numbers.formatInteger(accountDetail.totalValue, 0, 'COMMA')}"></td>
+
+						<td th:if="${editIndex != index.index}"><input type="checkbox"
+								th:checked="${accountDetail.keepValue}" disabled></td>
+						<td th:if="${editIndex == index.index}"><input type="checkbox"
+								th:field="*{updateAccountDetailForm.keepValue}">
+						</td>
+						<input th:if="${editIndex == index.index}" type="hidden" name="index" th:value="${index.index}">
+						<div th:if="${editIndex == index.index}">
+							</form>
+						</div>
+
+						<td>
+							<form>
+								<input type="hidden" name="index" th:value="${index.index}">
+								<button type="button" th:if="${editIndex != index.index}"
+									onclick="editAccountDetailForm(this)">編集</button>
+								<button type="button" th:if="${editIndex != index.index}"
+									onclick="removeAccountDetailForm(this)">削除</button>
+							</form>
+
+							<button type="button" th:if="${editIndex == index.index}" th:attr="index=${index.index}"
+								onclick="updateAccountDetailForm(this)">保存</button>
+							<button type="button" th:if="${editIndex == index.index}" th:attr="index=${index.index}"
+								onclick="cancelAccountDetailForm(this)">取消</button>
+						</td>
+					</tr>
+				</tbody>
+
+				<tfoot>
+					<tr>
+						<form id="createAccountDetailForm" th:object="${createAccountDetailForm}">
+							<td>
+								<select required th:field="*{category}">
+									<option value="" disabled selected>分類選択</option>
+									<option
+										th:each="category : ${T(com.lifehackaid.netincomesimulator.constant.AccountCategories).values()}"
+										th:value="${category}" th:text="${category.description}"></option>
+								</select>
+							</td>
+							<td>
+								<input type="text" required th:field="*{summary}" />
+							</td>
+							<td>
+								<input type="text" required th:field="*{unitValue}" onblur="formatNumber(this)" />
+							</td>
+							<td>
+								<input type="text" required th:field="*{unitAmount}" onblur="formatNumber(this)" />
+							</td>
+							<td>
+							</td>
+							<td>
+								<input type="checkbox" th:field="*{keepValue}" checked="false">
+							</td>
+							<td>
+								<input type="hidden" name="action" />
+								<button type="button" onclick="createAccountDetailForm()">追加</button>
+							</td>
+						</form>
+					</tr>
+
+				</tfoot>
+
+			</table>
+		</div>
+
+		<div style="width: 50%">
+			<table class="aggregationTable">
+				<thead>
+					<tr>
+						<th>計上項目</th>
+						<th>年額(円)</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="entry : ${fieldMap}">
+						<td th:text="${entry.value}"></td>
+						<td th:text="${#numbers.formatInteger(valueMap[entry.key],0,'COMMA')}"></td>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+</body>
+
+
+</html>
