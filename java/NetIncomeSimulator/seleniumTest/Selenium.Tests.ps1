@@ -1,6 +1,10 @@
 ﻿Set-StrictMode -Version 3.0
+# 本スクリプトを実行して、Tests Passed: 5, Failed: 0, Skipped: 0 NotRun: 0のようにPassed以外がゼロならテスト完了。
+# テスト実施前にEdgeプロセスを停止しておくことをお勧めします。
+# またテスト終了後Edgeプロセスはそのままとなります。適宜結果確認の上、手動停止ください。
 
-# 本スクリプトを実行して、Tests Passed: 5, Failed: 0, Skipped: 0 NotRun: 0などと出力されればテスト完了です。
+# エラー発生時は処理中断。
+$ErrorActionPreference = "Stop"
 
 # ドライバ類の読み込み ref:https://note.com/dokoka3568/n/n4df03afcfe26
 # 自環境のEdgeバージョンに合致するmsedgedriverをDL（https://developer.microsoft.com/ja-jp/microsoft-edge/tools/webdriver/）
@@ -31,8 +35,9 @@ $driver = New-Object OpenQA.Selenium.Edge.EdgeDriver($Service, $Options)
 
 # 画面の最大化
 $driver.Manage().Window.Maximize()
+#$driver.Manage().Cookies.DeleteAllCookies();
 
-# ScreenShotオブジェクトの作成
+# ScreenShotオブジェクトの作成と保存先の指定
 $screenShotDriver = New-Object CommonScreenShotUtil("nis", (Join-Path $env:userprofile "Desktop"))
 
 # 処理間隔（秒）
@@ -222,4 +227,5 @@ Describe "NetIncomeSimulator-UITest" {
     }
 
     $driver.Quit()
+
 }
