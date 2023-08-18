@@ -77,6 +77,9 @@ public class PresentationProcessHandleServiceTest {
 
 	}
 
+	//　Create（Add）Case
+
+	
 	@Test
     public void testHasErrorToAddAccountDetailWithMsgProcess_ErrorMessagesExist() {
     	when(netIncomeCalcService.calcTaxableIncomeAmount(anyList())).thenReturn(-1L);
@@ -91,15 +94,34 @@ public class PresentationProcessHandleServiceTest {
         assertFalse(testedService.hasErrorToAddAccountDetailWithMsgProcess(redirectAttributes, new ArrayList<>(), accountDetailFormForTest));
     }
 
+	//　UpdateCase
+	
 	@Test
-    public void testhasErrorToRemoveAccountDetailWithMsgProcess_ErrorMessagesExist() {
+    public void testHasErrorToUpdateAccountDetailWithMsgProcess_ErrorMessagesExist() {
+    	when(netIncomeCalcService.calcTaxableIncomeAmount(anyList())).thenReturn(-1L);
+
+        assertTrue(testedService.hasErrorToUpdateAccountDetailWithMsgProcess(redirectAttributes, new ArrayList<AccountDetailForm>(Arrays.asList(accountDetailFormForTest)),accountDetailFormForTest, "0"));
+    }
+
+	@Test
+    public void testHasErrorToUpdateAccountDetailWithMsgProcess_NoErrors() {
+        when(netIncomeCalcService.calcTaxableIncomeAmount(anyList())).thenReturn(1L);
+
+        assertFalse(testedService.hasErrorToUpdateAccountDetailWithMsgProcess(redirectAttributes, new ArrayList<AccountDetailForm>(Arrays.asList(accountDetailFormForTest)),accountDetailFormForTest, "0"));
+    }
+	
+	
+	// Delete(Remove)Case
+	
+	@Test
+    public void testHasErrorToRemoveAccountDetailWithMsgProcess_ErrorMessagesExist() {
     	when(netIncomeCalcService.calcTaxableIncomeAmount(anyList())).thenReturn(-1L);
 
         assertTrue(testedService.hasErrorToRemoveAccountDetailWithMsgProcess(redirectAttributes, new ArrayList<AccountDetailForm>(Arrays.asList(accountDetailFormForTest)), "0"));
     }
 
 	@Test
-    public void testhasErrorToRemoveAccountDetailWithMsgProcess_NoErrors() {
+    public void testHasErrorToRemoveAccountDetailWithMsgProcess_NoErrors() {
         when(netIncomeCalcService.calcTaxableIncomeAmount(anyList())).thenReturn(1L);
 
         assertFalse(testedService.hasErrorToRemoveAccountDetailWithMsgProcess(redirectAttributes, new ArrayList<AccountDetailForm>(Arrays.asList(accountDetailFormForTest)), "0"));

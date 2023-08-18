@@ -9,7 +9,7 @@ logging:
   level:
     root: WARN
     org.springframework: INFO
-    com.lifehackaid: DEBUG
+    com.lifehackaid: INFO
 
 # jsessionidをクエリストリングに載せないためにURLリライティングを無効化。
 server:

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Service Interruption</title>
+    <style>
+        .error-details {
+            font-size: 0.8em;
+            color: #aaa; /* 薄い文字色 */
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <div style="text-align:center; margin-top:100px;">
+        <h2>本機能の提供を現在中断しています</h2>
+        <p>しばらく待ってから再度お試しください。</p>
+
+        <div class="error-details">
+            <p>時間: <span th:text="${timestamp}"></span></p>
+            <p>サービス状態コード: <span th:text="${status}"></span></p>
+            <p>サービス状態詳細１: <span th:text="${error}"></span></p>
+            <p>サービス状態詳細２: <span th:text="${message}"></span></p>
+        </div>
+    </div>
+</body>
+</html>

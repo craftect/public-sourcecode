@@ -58,7 +58,6 @@ public class AccountDetailControllerTest {
 
 	//// Test-Cases
 
-
 	// CreateDetailCase
 
 	@Test
@@ -102,9 +101,7 @@ public class AccountDetailControllerTest {
 				.andExpect(redirectedUrl(NavigationConstants.SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
 
 	}
-	
-	
-	
+
 	// RootPathCase
 
 	@Test
@@ -113,8 +110,6 @@ public class AccountDetailControllerTest {
 				.andExpect(redirectedUrl(NavigationConstants.SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
 	}
 
-	
-
 	// ShowDetailsCase
 
 	@Test
@@ -122,18 +117,18 @@ public class AccountDetailControllerTest {
 		String recordId = DateUUIDGeneratorUtil.generateDateUUID();
 		mockMvc.perform(get("/showAccountDetailFormList").param("recordId", recordId)).andExpect(status().isOk())
 				.andExpect(view().name(NavigationConstants.ACCOUNT_DETAIL_FORM_LIST_TEMPLATENAME));
-	
+
 		verify(accountDetailRepository, times(1)).loadAccountDetailFormList(any());
 
 	}
 
 	@Test
 	public void testShowAccountDetailFormList_WithoutRecordId() throws Exception {
-	
-		//更新処理がある場合で実施
-		mockMvc.perform(get("/showAccountDetailFormList").param("editIndex","0")).andExpect(status().isOk())
+
+		// 更新処理がある場合で実施
+		mockMvc.perform(get("/showAccountDetailFormList").param("editIndex", "0")).andExpect(status().isOk())
 				.andExpect(view().name(NavigationConstants.ACCOUNT_DETAIL_FORM_LIST_TEMPLATENAME));
-		
+
 		verify(accountDetailRepository, never()).loadAccountDetailFormList(any());
 
 	}
@@ -149,7 +144,7 @@ public class AccountDetailControllerTest {
 		verify(accountDetailRepository, times(1)).saveAccountDetailFormList(any(), any());
 
 	}
-	
+
 	// AddRecordId
 
 	@Test
@@ -163,20 +158,20 @@ public class AccountDetailControllerTest {
 	@Test
 	public void testEditAccountDetailForm() throws Exception {
 		String index = "0";
-		
+
 		mockMvc.perform(post("/editAccountDetailForm").param("index", index)).andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(NavigationConstants.SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
 
 	}
 
 	// update-case
-	
+
 	@Test
 	public void testUpdateAccountDetailForm_WithBindingError() throws Exception {
 
 		when(presentationProcessHandleService.hasBindingErrorWithMsgProcess(any(), any())).thenReturn(true);
-		when(presentationProcessHandleService.hasErrorToAddAccountDetailWithMsgProcess(any(), any(),any())).thenReturn(false);
-
+		when(presentationProcessHandleService.hasErrorToUpdateAccountDetailWithMsgProcess(any(), any(), any(),any()))
+		.thenReturn(false);
 		
 		mockMvc.perform(post("/updateAccountDetailForm").param("index", "0")).andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(NavigationConstants.SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
@@ -185,11 +180,10 @@ public class AccountDetailControllerTest {
 
 	@Test
 	public void testUpdateAccountDetailForm_WithErrorToAddAccountDetail() throws Exception {
-		AccountDetailForm updateAccountDetailForm = new AccountDetailForm(AccountCategories.Revenue, "売上", 600000L, 12L,
-				true);
 
 		when(presentationProcessHandleService.hasBindingErrorWithMsgProcess(any(), any())).thenReturn(false);
-		when(presentationProcessHandleService.hasErrorToAddAccountDetailWithMsgProcess(any(), any(),any())).thenReturn(true);
+		when(presentationProcessHandleService.hasErrorToUpdateAccountDetailWithMsgProcess(any(), any(), any(),any()))
+				.thenReturn(true);
 
 		mockMvc.perform(post("/updateAccountDetailForm").param("index", "0")).andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(NavigationConstants.SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
@@ -198,11 +192,10 @@ public class AccountDetailControllerTest {
 
 	@Test
 	public void testUpdateAccountDetailForm_SuccessfulUpdate() throws Exception {
-		AccountDetailForm updateAccountDetailForm = new AccountDetailForm(AccountCategories.Revenue, "売上", 600000L, 12L,
-				true);
 
 		when(presentationProcessHandleService.hasBindingErrorWithMsgProcess(any(), any())).thenReturn(false);
-		when(presentationProcessHandleService.hasErrorToAddAccountDetailWithMsgProcess(any(), any(),any())).thenReturn(false);
+		when(presentationProcessHandleService.hasErrorToAddAccountDetailWithMsgProcess(any(), any(), any()))
+				.thenReturn(false);
 
 		mockMvc.perform(post("/updateAccountDetailForm").param("index", "0")).andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(NavigationConstants.SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
@@ -217,8 +210,8 @@ public class AccountDetailControllerTest {
 		accountDetailFormList.add(new AccountDetailForm(AccountCategories.Revenue, "売上", 600000L, 12L, true));
 
 		when(presentationProcessHandleService.hasErrorToRemoveAccountDetailWithMsgProcess(any(), any(), any()))
-		.thenReturn(false);
-		
+				.thenReturn(false);
+
 		mockMvc.perform(post("/removeAccountDetailForm").param("index", index).flashAttr("accountDetailFormList",
 				accountDetailFormList)).andExpect(status().is3xxRedirection())
 				.andExpect(redirectedUrl(NavigationConstants.SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
@@ -239,7 +232,5 @@ public class AccountDetailControllerTest {
 				.andExpect(redirectedUrl(NavigationConstants.SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
 
 	}
-
-
 
 }

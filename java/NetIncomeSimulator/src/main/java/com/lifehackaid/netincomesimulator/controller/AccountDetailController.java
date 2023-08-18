@@ -119,7 +119,7 @@ public class AccountDetailController {
 
 		// 相関チェック（合計値がマイナスになるなど）
 		if (presentationProcessHandleService.hasErrorToUpdateAccountDetailWithMsgProcess(redirectAttributes,
-				accountDetailFormList, updateAccountDetailForm,index)) {
+				accountDetailFormList, updateAccountDetailForm, index)) {
 			return NavigationConstants.REDIRECT_SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH;
 		}
 
@@ -216,10 +216,6 @@ public class AccountDetailController {
 		valueMap.put("IncomeDeduction",
 				netIncomeCalcService.aggregateByCategory(accountDetailFormList, AccountCategories.IncomeDeduction));
 
-		fieldMap.put("IncomeDeductionWithKeepValue", "所得控除総額(価値留保分)");
-		valueMap.put("IncomeDeductionWithKeepValue", netIncomeCalcService
-				.aggregateByCategoryWithKeepValue(accountDetailFormList, AccountCategories.IncomeDeduction));
-
 		fieldMap.put("taxableIncomeAmount", "課税所得");
 		valueMap.put("taxableIncomeAmount", netIncomeCalcService.calcTaxableIncomeAmount(accountDetailFormList));
 
@@ -243,7 +239,8 @@ public class AccountDetailController {
 
 		fieldMap.put("reservedValueBalanceAmount", "手残り(≠可処分所得)");
 		valueMap.put("reservedValueBalanceAmount",
-				netIncomeCalcService.calcReservedValueBalanceAmount(accountDetailFormList));
+				netIncomeCalcService.calcReservedValueBalanceAmount(accountDetailFormList)
+						- netIncomeCalcService.calcIncomeAndResidentAndSpecialIncomeTaxAmount(accountDetailFormList));
 
 		// 集計情報の設定
 		model.addAttribute("fieldMap", fieldMap);
