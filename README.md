@@ -1,7 +1,7 @@
 # 公開サービス/ツール
 
 ## フリーランス向けの税額／収支シミュレータ
-* サービスは[こちら](https://netincomesimulator.lifehackaid.com)で不定期に公開しています。
+* サービスは[こちら](https://netincomesimulator.lifehackaid.com)にて不定期に公開中。
  ![トップページ](https://github.com/craftect/public-sourcecode/assets/131850742/82ab90b5-556f-4e05-904a-4b0936362554)
 
 ### 特徴（機能面）
@@ -15,11 +15,11 @@
 * Web系業務システムの基本機能である明細編集機能。本サービスのソースコードを起点に様々なWeb系業務システムへの展開が可能な設計。
 * 変数名やメソッド名は仕様が極力直感的にわかるようにネーミング。（少し長いかもしれません）
 * 税率など将来の制度変更の可能性ある業務仕様はハードコーディングせず、設定ファイル（application.yml)から読み込むようにすることで、制度変更に備えた設計としている。
-* インフラにはAWSを利用。アプリケーション層はALB×Fargateの構成、DB層はEC2上にMariaDBを構築。（DB層アクセスのため踏み台サーバも構築）
-* Fargate採用により負荷に応じた柔軟なリソース拡張性を担保し、ALB経由とすることでサーバ証明書管理負荷低減やCognito連携による認証機能追加などの拡張性も意識。
+* インフラにはAWSを利用。アプリケーション層はEC2、DB層はEC2上にMariaDBを構築。（DB層アクセスのため踏み台サーバも構築）
+* アプリケーション層は将来の拡張性も念頭に、ALB×Fargateの環境も具備。ALB経由とすることでサーバ証明書管理負荷低減やCognito連携による認証機能追加などの拡張性も意識。
 * [単体テスト](https://github.com/craftect/public-sourcecode/tree/main/java/NetIncomeSimulator/src/test/java/com/lifehackaid/netincomesimulator)だけでなく[画面テスト](https://github.com/craftect/public-sourcecode/tree/main/java/NetIncomeSimulator/seleniumTest)もselenium×Pester(Powershellのテスティングフレームワーク）で自動化。
 * 画面テストはテストケースの前後で画面キャプチャを自動取得できるような仕組みを実装。
-* 単体テストはパラメタライズドテスト活用により、テスト仕様と期待値が一目してわかるよう考慮。例えば以下、本サービスの所得税計算用メソッドのテストケースのスニペットに関して、@CsvSourceアノテーション属性における左の値がメソッドへの入力値（所得金額）、右の値が戻り値（所得に対応する所得税額）。仕様は国税庁の[所得税速算表](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm)より作成。
+* 単体テストはパラメタライズドテスト活用により、テスト仕様と期待値が一目してわかるよう考慮。例えば以下、本サービスの所得税計算用メソッドのテストケースのスニペットに関して、@CsvSourceアノテーション属性における左の値がメソッドへの入力値（所得金額）、右の値が戻り値（所得金額に対応する所得税額）。仕様は国税庁の[所得税速算表](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm)より作成。
  
 ``` java 
 	@ParameterizedTest
