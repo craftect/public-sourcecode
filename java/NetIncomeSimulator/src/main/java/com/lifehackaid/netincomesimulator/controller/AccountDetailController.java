@@ -78,9 +78,20 @@ public class AccountDetailController {
 
 	// 明細表示処理(cRud)
 	@RequestMapping("/showAccountDetailFormList")
-	public String showAccountDetailFormList(Model model, @RequestParam(required = false) String recordId,
-			@ModelAttribute("editIndex") String editIndex) {
+	public String showAccountDetailFormList(Model model,
+			@ModelAttribute("accountDetailFormList") List<AccountDetailForm> accountDetailFormList,
+			@RequestParam(required = false) String recordId, @ModelAttribute("editIndex") String editIndex,
+			RedirectAttributes redirectAttributes) {
 
+		// 相関チェック（recordIdが存在する場合の明細存在など）
+		if (presentationProcessHandleService.hasErrorToShowAccountDetailWithMsgProcess(redirectAttributes,
+				accountDetailFormList, recordId)) {
+
+			return NavigationConstants.REDIRECT_SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH;
+
+		}
+
+		//画面情報の組立のためのデータバインド処理は可読性の観点から別メソッド化
 		addAttributesForAccountDetailFormList(model, recordId, editIndex);
 
 		return NavigationConstants.ACCOUNT_DETAIL_FORM_LIST_TEMPLATENAME;
@@ -88,7 +99,7 @@ public class AccountDetailController {
 
 	// パス指定無しの場合は明細表示画面にリダイレクト
 	@RequestMapping("/")
-	public String handleRootPath(Model model) {
+	public String handleRootPath() {
 
 		return NavigationConstants.REDIRECT_SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH;
 
@@ -97,8 +108,7 @@ public class AccountDetailController {
 	// 明細更新処理(crUd) Edit→Update処理処理と遷移
 
 	@PostMapping("/editAccountDetailForm")
-	public String editAccountDetailForm(Model model, @RequestParam("index") String index,
-			RedirectAttributes redirectAttributes) {
+	public String editAccountDetailForm(@RequestParam("index") String index, RedirectAttributes redirectAttributes) {
 
 		redirectAttributes.addFlashAttribute("editIndex", index);
 
@@ -107,7 +117,7 @@ public class AccountDetailController {
 	}
 
 	@PostMapping("/updateAccountDetailForm")
-	public String updateAccountDetailForm(Model model, @RequestParam("index") String index,
+	public String updateAccountDetailForm(@RequestParam("index") String index,
 			@ModelAttribute("accountDetailFormList") List<AccountDetailForm> accountDetailFormList,
 			@ModelAttribute("updateAccountDetailForm") @Valid AccountDetailForm updateAccountDetailForm,
 			BindingResult bindingResult, RedirectAttributes redirectAttributes) {

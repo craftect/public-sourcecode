@@ -1,17 +1,3 @@
-/*
-
-   CREATE TABLE AccountDetail (
-    Id VARCHAR(255) NOT NULL,
-    category VARCHAR(255),
-    summary VARCHAR(255),
-    unitValue BIGINT,
-    unitAmount BIGINT,
-    keepValue BOOLEAN,
-    PRIMARY KEY (Id)
-);
-
- */
-
 package com.lifehackaid.netincomesimulator.entity;
 
 import com.lifehackaid.netincomesimulator.constant.AccountCategories;

@@ -3,8 +3,6 @@ package com.lifehackaid.netincomesimulator.common;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import com.lifehackaid.netincomesimulator.common.DateUUIDGeneratorUtil;
-
 class DateUUIDGeneratorUtilTest {
 
     @Test

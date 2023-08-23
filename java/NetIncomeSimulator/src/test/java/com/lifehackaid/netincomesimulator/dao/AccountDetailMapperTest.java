@@ -1,7 +1,6 @@
 package com.lifehackaid.netincomesimulator.dao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,19 +8,11 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.mybatis.spring.boot.test.autoconfigure.MybatisTest;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 
 import com.lifehackaid.netincomesimulator.common.DateUUIDGeneratorUtil;
 import com.lifehackaid.netincomesimulator.constant.AccountCategories;
-import com.lifehackaid.netincomesimulator.dao.AccountDetailMapper;
 import com.lifehackaid.netincomesimulator.entity.AccountDetailEntity;
-import com.lifehackaid.netincomesimulator.form.AccountDetailForm;
-import com.lifehackaid.netincomesimulator.repository.AccountDetailRepository;
 
 @SpringBootTest
 public class AccountDetailMapperTest {
