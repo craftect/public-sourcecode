@@ -1,9 +1,0 @@
-<configuration>
-	<!-- 他の設定 -->
-	<settings>
-		<setting name="mapUnderscoreToCamelCase" value="true" />
-	</settings>
-	<typeHandlers>
-		<typeHandler handler="org.apache.ibatis.type.EnumTypeHandler" />
-	</typeHandlers>
-</configuration>
