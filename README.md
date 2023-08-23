@@ -18,8 +18,26 @@
 * インフラにはAWSを利用。アプリケーション層はEC2、DB層はEC2上にMariaDBを構築。（DB層アクセスのため踏み台サーバも構築）
 * アプリケーション層は将来の拡張性も念頭に、ALB×Fargateの環境も具備。ALB経由とすることでサーバ証明書管理負荷低減やCognito連携による認証機能追加などの拡張性も意識。
 * [単体テスト](https://github.com/craftect/public-sourcecode/tree/main/java/NetIncomeSimulator/src/test/java/com/lifehackaid/netincomesimulator)だけでなく[画面テスト](https://github.com/craftect/public-sourcecode/tree/main/java/NetIncomeSimulator/seleniumTest)もselenium×Pester(Powershellのテスティングフレームワーク）で自動化。
+``` 実行例
+PS C:\\java\NetIncomeSimulator\seleniumTest> .\Selenium.Tests.ps1
+Starting Microsoft Edge WebDriver 115.0.1901.203 (a5a2b1779bcfe71f081bc9104cca968d420a89ac) on port 53271
+
+～中略～
+
+DevTools listening on ws://127.0.0.1:53295/devtools/browser/80398d71-6cd0-49b3-b7c5-02802be708ee
+Discovery found 6 tests in 5.34s.
+Running tests.
+Value:家賃
+Value:携帯電話使用料
+[+] C:\java\NetIncomeSimulator\seleniumTest\Selenium.Tests.ps1 30.76s (22.07s|3.52s)
+Tests completed in 30.95s
+Tests Passed: 6, Failed: 0, Skipped: 0 NotRun: 0
+PS C:\java\NetIncomeSimulator\seleniumTest>
+```
+
 * 画面テストはテストケースの前後で画面キャプチャを自動取得できるような仕組みを実装。
 * 単体テストはパラメタライズドテスト活用により、テスト仕様と期待値が一目してわかるよう考慮。例えば以下、本サービスの所得税計算用メソッドのテストケースのスニペットに関して、@CsvSourceアノテーション属性における左の値がメソッドへの入力値（所得金額）、右の値が戻り値（所得金額に対応する所得税額）。仕様は国税庁の[所得税速算表](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/2260.htm)より作成。
+
  
 ``` java 
 	@ParameterizedTest
