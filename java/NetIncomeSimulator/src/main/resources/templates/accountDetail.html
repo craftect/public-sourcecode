@@ -27,7 +27,7 @@
 
 		.header a {
 			color: #444444;
-			font-weight: bold; 
+			font-weight: bold;
 			text-decoration: none;
 			/* 下線を削除 */
 		}
@@ -146,8 +146,10 @@
 			position: absolute;
 			/* Fix position of arrows */
 			z-index: 1;
-		    border: none;      /* 枠線を取り除く */
-		    outline: none;     /* アウトラインを取り除く */
+			border: none;
+			/* 枠線を取り除く */
+			outline: none;
+			/* アウトラインを取り除く */
 			/* Ensure arrows are on top */
 		}
 
@@ -156,8 +158,10 @@
 			background-color: white;
 			width: 1%;
 			z-index: 1;
-		    border: none;      /* 枠線を取り除く */
-		    outline: none;     /* アウトラインを取り除く */
+			border: none;
+			/* 枠線を取り除く */
+			outline: none;
+			/* アウトラインを取り除く */
 			/* Ensure controls are on top */
 		}
 
@@ -195,7 +199,7 @@
 			form.method = "post";
 
 			// ダイアログボックスの表示
-			if (confirm("元には戻せません。本当に明細を削除してよいですか？（必要に応じて一覧保存してください）")) {
+			if (confirm("元には戻せません。本当に明細を削除してよいですか？（必要に応じて保存してください）")) {
 				form.submit();
 			}
 		}
@@ -313,7 +317,7 @@
 
 <body>
 	<div class="header">
-		<h2><a href="/">フリーランス向け税額／収支シミュレータ  </a></h3>
+		<h2><a href="/">フリーランス向け税額／収支シミュレータ </a></h3>
 	</div>
 	<div class="container mt-5">
 		<div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
@@ -321,13 +325,14 @@
 				<div class="carousel-item active" data-bs-interval="10000">
 					<h2>【概要】</h2>
 					<li>本サービスは、年間の売上、必要経費、所得控除、税額控除費目から、おおよその税額と手残りとなる金額を計算するサービスです。</li>
-					<font color="orange" size="4">（※1）</font>『価値留保有』とは基礎控除など必要経費同様、課税所得に影響あるものの、その価値が第三者に譲渡されない明細を峻別する項目で最終的に手残りに加算されます。特にiDeCo、小規模企業共済などの積立資産は国民年金を補う役割で自由に引き出せないこともあり、これを手残りとみなすかどうかはご自身でご判断ください。
+					<font color="orange" size="4">（※1）</font>
+					『価値留保有』とは基礎控除など必要経費同様、課税所得に影響あるものの、その価値が第三者に譲渡されない明細を峻別する項目で最終的に手残りに加算されます。特にiDeCo、小規模企業共済などの積立資産は国民年金を補う役割で自由に引き出せないこともあり、これを手残りとみなすかどうかはご自身でご判断ください。
 				</div>
 				<div class="carousel-item" data-bs-interval="20000">
 					<h2>【操作方法】</h2>
 					<ul>
 						<li>初回アクセス時は初期値が入力されています。自由に明細情報を編集して利用ください。</li>
-						<li>「一覧保存」ボタンをクリックするとレコードIDが付与されたURLが生成されます。このURLを保存することで、画面などを閉じたとしても後からデータの復元が可能です。</li>
+						<li>「保存」ボタンをクリックするとレコードIDが付与されたURLが生成されます。このURLを保存することで、画面などを閉じたとしても後からデータの復元が可能です。</li>
 					</ul>
 				</div>
 				<div class="carousel-item" data-bs-interval="20000">
@@ -377,7 +382,7 @@
 					<tr>
 						<th colspan="1">
 							<form>
-								<button type="button" onclick="saveAccountDetailFormList(this)">一覧保存</button>
+								<button type="button" onclick="saveAccountDetailFormList(this)">保存</button>
 							</form>
 						</th>
 						<th colspan="6">
@@ -401,7 +406,7 @@
 						</th>
 						<th>年額<font size="2"> (消費税込)</font>
 						</th>
-						<th>価値留保有<font size="1" color="orange"><b>(※1)</b></font>
+						<th>価値留保有<font size="1" color="orange"><b>　(※1)</b></font>
 						</th>
 						<th></th>
 					</tr>

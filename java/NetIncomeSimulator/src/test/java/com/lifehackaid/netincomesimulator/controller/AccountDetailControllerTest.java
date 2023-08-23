@@ -1,7 +1,6 @@
 package com.lifehackaid.netincomesimulator.controller;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -23,8 +22,6 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.util.StringUtils;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.lifehackaid.netincomesimulator.common.DateUUIDGeneratorUtil;
 import com.lifehackaid.netincomesimulator.constant.AccountCategories;
@@ -119,6 +116,19 @@ public class AccountDetailControllerTest {
 				.andExpect(view().name(NavigationConstants.ACCOUNT_DETAIL_FORM_LIST_TEMPLATENAME));
 
 		verify(accountDetailRepository, times(1)).loadAccountDetailFormList(any());
+
+	}
+
+	@Test
+	public void testShowAccountDetailFormList_WithWrongRecordId() throws Exception {
+
+		when(presentationProcessHandleService.hasErrorToShowAccountDetailWithMsgProcess(any(), any(), any()))
+		.thenReturn(true);
+		mockMvc.perform(get("/showAccountDetailFormList").param("recordId", "dummyRecordId")).andExpect(status().is3xxRedirection())
+				.andExpect(view().name(NavigationConstants.REDIRECT_SHOW_ACCOUNT_DETAIL_FORM_LIST_PATH));
+		
+		verify(accountDetailRepository, never()).loadAccountDetailFormList(any());
+
 
 	}
 

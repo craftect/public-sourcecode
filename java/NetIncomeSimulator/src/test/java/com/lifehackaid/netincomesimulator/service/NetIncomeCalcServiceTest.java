@@ -17,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.lifehackaid.netincomesimulator.constant.AccountCategories;
 import com.lifehackaid.netincomesimulator.form.AccountDetailForm;
-import com.lifehackaid.netincomesimulator.service.NetIncomeCalcService;
 
 @SpringBootTest
 public class NetIncomeCalcServiceTest {
