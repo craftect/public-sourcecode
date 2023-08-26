@@ -2,7 +2,7 @@
 
 ## フリーランス向けの税額／収支シミュレータ
 * サービスは[こちら](https://netincomesimulator.lifehackaid.com)にて不定期に公開中。
- ![トップページ](https://github.com/craftect/public-sourcecode/assets/131850742/75ab1460-663a-42d5-bb7c-fdc4efa01efb)
+![image](https://github.com/craftect/public-sourcecode/assets/131850742/6f2b32be-f91e-4bf1-996e-895d24cb9dac)
 
 ### 特徴（機能面）
 * 利便性向上の観点から認証機能は持たないものの、URLに付加されるレコードID(yyyyMMddHHmmss+UUID)によって、過去編集した明細一覧を復元可能。
